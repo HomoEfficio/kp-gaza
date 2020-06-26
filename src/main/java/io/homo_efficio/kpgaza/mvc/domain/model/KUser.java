@@ -54,4 +54,9 @@ public class KUser extends BaseEntity {
         }
         return new Distribution(null, this, chatRoom, amount, targets);
     }
+
+    public Receipt receiveMoney(Receipt receipt) {
+        receipt.receivedBy(this.id);
+        return receipt;
+    }
 }
