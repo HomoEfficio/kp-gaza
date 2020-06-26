@@ -68,6 +68,9 @@ public class KUser extends BaseEntity {
         if (multipleReceiptTrial)
             throw new RuntimeException("동일한 뿌리기에서 중복 수령은 허용되지 않습니다.");
 
+        if (distribution.getDistributor().equals(this))
+            throw new RuntimeException("자기가 뿌린 머니는 수령할 수 없습니다.");
+
         receipt.receivedBy(this.id);
         return receipt;
     }
