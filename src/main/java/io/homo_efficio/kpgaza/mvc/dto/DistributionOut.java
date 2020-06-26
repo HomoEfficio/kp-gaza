@@ -31,7 +31,7 @@ public class DistributionOut {
     private List<ReceiptOut> receipts;
 
 
-    public DistributionOut from(Distribution distribution) {
+    public static DistributionOut from(Distribution distribution) {
         return new DistributionOut(
                 distribution.getId(),
                 distribution.getToken(),

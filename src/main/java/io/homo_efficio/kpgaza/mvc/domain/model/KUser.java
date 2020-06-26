@@ -47,6 +47,11 @@ public class KUser extends BaseEntity {
     }
 
     public Distribution distributeMoney(ChatRoom chatRoom, Integer amount, Integer targets) {
+        if (!chatRoom.containsUser(this)) {
+            throw new RuntimeException(
+                    String.format("대화방 [%s]에 사용자 [%d]가 존재하지 않아 뿌리기를 할 수 없습니다.",
+                            chatRoom.getId(), id));
+        }
         return new Distribution(null, this, chatRoom, amount, targets);
     }
 }

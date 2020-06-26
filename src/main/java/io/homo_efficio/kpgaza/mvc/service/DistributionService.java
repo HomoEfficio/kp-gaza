@@ -1,6 +1,6 @@
 package io.homo_efficio.kpgaza.mvc.service;
 
-import io.homo_efficio.kpgaza.mvc.domain.model.Distribution;
+import io.homo_efficio.kpgaza.mvc.dto.DistributionIn;
 import io.homo_efficio.kpgaza.mvc.dto.DistributionOut;
 
 /**
@@ -9,5 +9,5 @@ import io.homo_efficio.kpgaza.mvc.dto.DistributionOut;
  */
 public interface DistributionService {
 
-    DistributionOut createDistribution(Distribution distribution);
+    DistributionOut createDistribution(DistributionIn distributionIn);
 }

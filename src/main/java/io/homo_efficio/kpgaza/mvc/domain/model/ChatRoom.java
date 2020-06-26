@@ -41,4 +41,8 @@ public class ChatRoom extends BaseEntity {
         this.name = name;
         this.owner = owner;
     }
+
+    public boolean containsUser(KUser kUser) {
+        return chatUsers.stream().anyMatch(cu -> cu.getChatter().equals(kUser));
+    }
 }
