@@ -15,6 +15,9 @@ import java.util.List;
  * created on 2020-06-26
  */
 @Entity
+@Table(indexes = {
+        @Index(name = "IDX_DISTRIBUTION__TOKEN", columnList = "token", unique = true)
+})
 @Getter
 @NoArgsConstructor
 @EqualsAndHashCode(of = "id", callSuper = false)

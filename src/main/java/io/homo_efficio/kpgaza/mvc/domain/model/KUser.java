@@ -55,7 +55,12 @@ public class KUser extends BaseEntity {
         return new Distribution(null, this, chatRoom, amount, targets);
     }
 
-    public Receipt receiveMoney(Receipt receipt) {
+    public Receipt receiveMoney(Distribution distribution) {
+        Receipt receipt = distribution.getReceipts().stream()
+                .filter(r -> r.getStatus().equals(Receipt.Status.OPEN))
+                .findFirst()
+                .orElseThrow(() -> new RuntimeException(
+                        String.format("토큰 [%s]로 뿌려진 머니가 이미 모두 수령됐습니다.", distribution.getToken())));
         receipt.receivedBy(this.id);
         return receipt;
     }
