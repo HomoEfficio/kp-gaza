@@ -18,8 +18,10 @@ public class KUserServiceImpl implements KUserService {
 
     private final KUserRepository kUserRepository;
 
+
     @Override
     public KUserOut create(KUserIn kUserIn) {
         return KUserOut.from(kUserRepository.save(kUserIn.mapToEntity()));
     }
+
 }
