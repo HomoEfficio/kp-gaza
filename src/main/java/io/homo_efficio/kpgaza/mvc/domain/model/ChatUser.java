@@ -40,5 +40,8 @@ public class ChatUser extends BaseEntity {
         this.id = id;
         this.chatRoom = chatRoom;
         this.chatter = chatter;
+
+        chatRoom.getChatUsers().add(this);
+        chatter.getChatUsers().add(this);
     }
 }
