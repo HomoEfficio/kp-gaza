@@ -48,10 +48,10 @@ insert into chat_user (chat_room_id, chatter_id) values
 ('c2cef0fb71084f5e92e39b3011f77fbf', 9)
 ;
 
-insert into distribution (token, amount, targets, distributor_id, chat_room_id) values
-('a11', 100, 2, 1, '4cf5507010ae4097afcfd61a25cfd233'),
-('a21', 400, 4, 2, '4cf5507010ae4097afcfd61a25cfd233'),
-('c41', 300, 1, 4, 'b7dd1bf7bf2048f898ff558f04faa35f')
+insert into distribution (token, amount, targets, distributor_id, chat_room_id, created_at) values
+('a11', 100, 2, 1, '4cf5507010ae4097afcfd61a25cfd233', now()),
+('a21', 400, 4, 2, '4cf5507010ae4097afcfd61a25cfd233', now()),
+('c41', 300, 1, 4, 'b7dd1bf7bf2048f898ff558f04faa35f', now())
 ;
 
 insert into receipt (receiver_id, amount, distribution_id, status) values

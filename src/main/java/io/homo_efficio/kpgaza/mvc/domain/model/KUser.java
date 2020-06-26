@@ -6,6 +6,8 @@ import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
+import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
@@ -74,6 +76,10 @@ public class KUser extends BaseEntity {
         if (!distribution.getChatRoom().containsUser(this)) {
             throw new RuntimeException("참여하지 않은 대화방에 있는 뿌리기는 수령할 수 없습니다.");
         }
+
+        LocalDateTime now = LocalDateTime.now();
+        if (distribution.getCreatedDateTime().isBefore(now.minus(10, ChronoUnit.MINUTES)))
+            throw new RuntimeException("10분 이상 경과된 뿌리기는 수령할 수 없습니다.");
 
         receipt.receivedBy(this.id);
         return receipt;
