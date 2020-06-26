@@ -1,0 +1,79 @@
+package io.homo_efficio.kpgaza.mvc.controller;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
+import io.homo_efficio.kpgaza.mvc.dto.ReceiptIn;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.json.JacksonTester;
+import org.springframework.http.MediaType;
+import org.springframework.test.context.jdbc.Sql;
+import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.setup.MockMvcBuilders;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.context.WebApplicationContext;
+import org.springframework.web.filter.CharacterEncodingFilter;
+
+import java.util.UUID;
+import java.util.stream.Stream;
+
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+
+/**
+ * @author homo.efficio@gmail.com
+ * created on 2020-06-27
+ */
+@SpringBootTest
+@Transactional
+public class ReceiptControllerTest {
+
+    private MockMvc mvc;
+
+    @Autowired
+    private WebApplicationContext ctx;
+
+    private JacksonTester<ReceiptIn> receiptInJackson;
+
+    @BeforeEach
+    public void beforeEach() {
+        mvc = MockMvcBuilders.webAppContextSetup(ctx)
+                .addFilters(new CharacterEncodingFilter("UTF-8", true))
+                .alwaysDo(print())
+                .build();
+        JacksonTester.initFields(this, new ObjectMapper());
+    }
+
+    @ParameterizedTest(name = "대화방 멤버 [{0}]가 대화방 [{1}]에서 토큰 [{2}]을 사용해서 뿌려진 머니를 수령하면, 수령 금액 [{3}]을 반환한다.")
+    @MethodSource("receipts")
+    @Sql(scripts = "classpath:init-distributions.sql")
+    void createReceipt(Long chatterId, UUID chatRoomId, String token, Integer amount) throws Exception {
+        mvc.perform(post("/receipts")
+                .contentType(MediaType.APPLICATION_JSON)
+                .accept(MediaType.APPLICATION_JSON)
+                .header("X-USER-ID", chatterId)
+                .header("X-ROOM-ID", chatRoomId)
+                .content(receiptInJackson.write(new ReceiptIn(token, null)).getJson()))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("amount").value(amount));
+    }
+
+    private static Stream<Arguments> receipts() {
+        return Stream.of(
+                Arguments.of(2L, "4cf55070-10ae-4097-afcf-d61a25cfd233", "a11", 50),
+                Arguments.of(3L, "4cf55070-10ae-4097-afcf-d61a25cfd233", "a11", 50),
+
+                Arguments.of(1L, "4cf55070-10ae-4097-afcf-d61a25cfd233", "a21", 100),
+                Arguments.of(3L, "4cf55070-10ae-4097-afcf-d61a25cfd233", "a21", 100),
+                Arguments.of(4L, "4cf55070-10ae-4097-afcf-d61a25cfd233", "a21", 100),
+                Arguments.of(5L, "4cf55070-10ae-4097-afcf-d61a25cfd233", "a21", 100),
+
+                Arguments.of(6L, "b7dd1bf7-bf20-48f8-98ff-558f04faa35f", "c41", 300)
+        );
+    }
+}
