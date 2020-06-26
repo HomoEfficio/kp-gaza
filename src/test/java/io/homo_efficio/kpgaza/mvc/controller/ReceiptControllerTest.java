@@ -18,10 +18,12 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.filter.CharacterEncodingFilter;
+import org.springframework.web.util.NestedServletException;
 
 import java.util.UUID;
 import java.util.stream.Stream;
 
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -111,7 +113,7 @@ public class ReceiptControllerTest {
                 .andExpect(jsonPath("amount").value(33));
     }
 
-    @DisplayName("동일한 뿌리기에서 한 사용자가 중복 수령 불가하다.")
+    @DisplayName("동일한 뿌리기에서 한 사용자가 중복 수령 시도하면 예외가 발생한다.")
     @Test
     @Sql(scripts = "classpath:init-distributions.sql")
     void receiveMultipleTimesInSameDistributionProhibited() throws Exception {
@@ -122,14 +124,13 @@ public class ReceiptControllerTest {
                 .header("X-ROOM-ID", "4cf55070-10ae-4097-afcf-d61a25cfd233")
                 .content(receiptInJackson.write(new ReceiptIn("a11")).getJson()))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("amount").value(34));
+                .andExpect(jsonPath("amount").value(50));
 
-        mvc.perform(post("/receipts")
+        assertThrows(NestedServletException.class, () -> mvc.perform(post("/receipts")
                 .contentType(MediaType.APPLICATION_JSON)
                 .accept(MediaType.APPLICATION_JSON)
                 .header("X-USER-ID", 2)
                 .header("X-ROOM-ID", "4cf55070-10ae-4097-afcf-d61a25cfd233")
-                .content(receiptInJackson.write(new ReceiptIn("a11")).getJson()))
-                .andExpect(status().is4xxClientError());
+                .content(receiptInJackson.write(new ReceiptIn("a11")).getJson())));
     }
 }

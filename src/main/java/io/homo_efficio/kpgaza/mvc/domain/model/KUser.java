@@ -61,6 +61,13 @@ public class KUser extends BaseEntity {
                 .findFirst()
                 .orElseThrow(() -> new RuntimeException(
                         String.format("토큰 [%s]로 뿌려진 머니가 이미 모두 수령됐습니다.", distribution.getToken())));
+
+        boolean multipleReceiptTrial = distribution.getReceipts().stream()
+                .filter(r -> r.getStatus().equals(Receipt.Status.CLOSED))
+                .anyMatch(r -> r.getReceiverId().equals(this.id));
+        if (multipleReceiptTrial)
+            throw new RuntimeException("동일한 뿌리기에서 중복 수령은 허용되지 않습니다.");
+
         receipt.receivedBy(this.id);
         return receipt;
     }
