@@ -6,9 +6,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
-import javax.validation.constraints.Max;
+import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
 import java.util.UUID;
 
 /**
@@ -16,23 +15,21 @@ import java.util.UUID;
  * created on 2020-06-26
  */
 @Entity
-@Table(name = "k_user")
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
 @EqualsAndHashCode(of = "id", callSuper = false)
-public class KUser extends BaseEntity {
+public class ChatRoom extends BaseEntity {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    @Column(columnDefinition = "BINARY(16)")
+    private UUID id;
 
     @NotNull
-    @Column(length = 20)
+    @Column(length = 30)
     private String name;
 
-
-    public ChatRoom createChatRoom(String roomName) {
-        return new ChatRoom(UUID.randomUUID(), roomName, this);
-    }
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "owner_id")
+    private KUser owner;
 }
