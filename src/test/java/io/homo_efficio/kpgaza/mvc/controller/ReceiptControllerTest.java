@@ -110,4 +110,26 @@ public class ReceiptControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("amount").value(33));
     }
+
+    @DisplayName("동일한 뿌리기에서 한 사용자가 중복 수령 불가하다.")
+    @Test
+    @Sql(scripts = "classpath:init-distributions.sql")
+    void receiveMultipleTimesInSameDistributionProhibited() throws Exception {
+        mvc.perform(post("/receipts")
+                .contentType(MediaType.APPLICATION_JSON)
+                .accept(MediaType.APPLICATION_JSON)
+                .header("X-USER-ID", 2)
+                .header("X-ROOM-ID", "4cf55070-10ae-4097-afcf-d61a25cfd233")
+                .content(receiptInJackson.write(new ReceiptIn("a11")).getJson()))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("amount").value(34));
+
+        mvc.perform(post("/receipts")
+                .contentType(MediaType.APPLICATION_JSON)
+                .accept(MediaType.APPLICATION_JSON)
+                .header("X-USER-ID", 2)
+                .header("X-ROOM-ID", "4cf55070-10ae-4097-afcf-d61a25cfd233")
+                .content(receiptInJackson.write(new ReceiptIn("a11")).getJson()))
+                .andExpect(status().is4xxClientError());
+    }
 }
