@@ -1,5 +1,6 @@
 package io.homo_efficio.kpgaza.mvc.dto;
 
+import io.homo_efficio.kpgaza.mvc.domain.model.KUser;
 import lombok.*;
 
 import javax.validation.constraints.Max;
@@ -23,4 +24,8 @@ public class KUserIn {
     @Min(value = 2, message = "사용자 이름은 2자 이상이어야 합니다.")
     @Max(value = 20, message = "사용자 이름은 10자 이내여야 합니다.")
     private String name;
+
+    public KUser mapToEntity() {
+        return new KUser(id, name);
+    }
 }
