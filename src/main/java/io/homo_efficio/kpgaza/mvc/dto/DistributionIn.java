@@ -25,4 +25,9 @@ public class DistributionIn {
     private Integer amount;
     @NotNull
     private Integer targets;
+
+    public DistributionIn(Integer amount, Integer targets) {
+        this.amount = amount;
+        this.targets = targets;
+    }
 }
