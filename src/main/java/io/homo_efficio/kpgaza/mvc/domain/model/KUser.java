@@ -45,4 +45,8 @@ public class KUser extends BaseEntity {
     public ChatUser enterChatRoom(ChatRoom chatRoom) {
         return new ChatUser(null, chatRoom, this);
     }
+
+    public Distribution distributeMoney(ChatRoom chatRoom, Integer amount, Integer targets) {
+        return new Distribution(null, this, chatRoom, amount, targets);
+    }
 }
