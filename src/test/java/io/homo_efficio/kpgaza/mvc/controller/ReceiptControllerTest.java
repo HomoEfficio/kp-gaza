@@ -58,7 +58,7 @@ public class ReceiptControllerTest {
                 .accept(MediaType.APPLICATION_JSON)
                 .header("X-USER-ID", chatterId)
                 .header("X-ROOM-ID", chatRoomId)
-                .content(receiptInJackson.write(new ReceiptIn(token, null)).getJson()))
+                .content(receiptInJackson.write(new ReceiptIn(token)).getJson()))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("amount").value(amount));
     }

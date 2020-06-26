@@ -18,4 +18,8 @@ public class ReceiptIn {
     private String token;
     private Long receiverId;
     private UUID chatRoomId;
+
+    public ReceiptIn(String token) {
+        this.token = token;
+    }
 }
