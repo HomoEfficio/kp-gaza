@@ -3,6 +3,8 @@ package io.homo_efficio.kpgaza.mvc.controller;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.homo_efficio.kpgaza.mvc.dto.ReceiptIn;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
@@ -75,5 +77,37 @@ public class ReceiptControllerTest {
 
                 Arguments.of(6L, "b7dd1bf7-bf20-48f8-98ff-558f04faa35f", "c41", 300)
         );
+    }
+
+    @DisplayName("1/N 이 딱 떨어지지 않을 때는 첫번쨰 수령자가 나머지를 포함한 금액을 수령한다.")
+    @Sql(scripts = "classpath:init-distributions-inequal-amounts.sql")
+    @Test
+    void createReceiptWithInEqualAmounts() throws Exception {
+        mvc.perform(post("/receipts")
+                .contentType(MediaType.APPLICATION_JSON)
+                .accept(MediaType.APPLICATION_JSON)
+                .header("X-USER-ID", 2)
+                .header("X-ROOM-ID", "4cf55070-10ae-4097-afcf-d61a25cfd233")
+                .content(receiptInJackson.write(new ReceiptIn("a11")).getJson()))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("amount").value(34));
+
+        mvc.perform(post("/receipts")
+                .contentType(MediaType.APPLICATION_JSON)
+                .accept(MediaType.APPLICATION_JSON)
+                .header("X-USER-ID", 3)
+                .header("X-ROOM-ID", "4cf55070-10ae-4097-afcf-d61a25cfd233")
+                .content(receiptInJackson.write(new ReceiptIn("a11")).getJson()))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("amount").value(33));
+
+        mvc.perform(post("/receipts")
+                .contentType(MediaType.APPLICATION_JSON)
+                .accept(MediaType.APPLICATION_JSON)
+                .header("X-USER-ID", 4)
+                .header("X-ROOM-ID", "4cf55070-10ae-4097-afcf-d61a25cfd233")
+                .content(receiptInJackson.write(new ReceiptIn("a11")).getJson()))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("amount").value(33));
     }
 }
