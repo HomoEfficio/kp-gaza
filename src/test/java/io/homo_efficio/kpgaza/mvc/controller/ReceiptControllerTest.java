@@ -137,11 +137,23 @@ public class ReceiptControllerTest {
     @DisplayName("자기가 뿌린 뿌리기에서 수령 시도하면 예외가 발생한다.")
     @Test
     @Sql(scripts = "classpath:init-distributions.sql")
-    void selfReceiptProhibited() throws Exception {
+    void selfReceiptProhibited() {
         assertThrows(NestedServletException.class, () -> mvc.perform(post("/receipts")
                 .contentType(MediaType.APPLICATION_JSON)
                 .accept(MediaType.APPLICATION_JSON)
                 .header("X-USER-ID", 1)
+                .header("X-ROOM-ID", "4cf55070-10ae-4097-afcf-d61a25cfd233")
+                .content(receiptInJackson.write(new ReceiptIn("a11")).getJson())));
+    }
+
+    @DisplayName("다른 대화방의 사용자가 다른 방의 뿌리기에서 수령 시도하면 예외가 발생한다.")
+    @Test
+    @Sql(scripts = "classpath:init-distributions.sql")
+    void differentChatRoomReceiptProhibited() {
+        assertThrows(NestedServletException.class, () -> mvc.perform(post("/receipts")
+                .contentType(MediaType.APPLICATION_JSON)
+                .accept(MediaType.APPLICATION_JSON)
+                .header("X-USER-ID", 6)
                 .header("X-ROOM-ID", "4cf55070-10ae-4097-afcf-d61a25cfd233")
                 .content(receiptInJackson.write(new ReceiptIn("a11")).getJson())));
     }
