@@ -1,9 +1,6 @@
 package io.homo_efficio.kpgaza.mvc.domain.model;
 
-import lombok.AllArgsConstructor;
-import lombok.EqualsAndHashCode;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
@@ -23,7 +20,6 @@ public class Receipt extends BaseEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @NotNull
     private Long receiverId;
 
     @NotNull
@@ -32,6 +28,19 @@ public class Receipt extends BaseEntity {
     @ManyToOne
     @JoinColumn(name = "distribution_id")
     private Distribution distribution;
+
+    @Enumerated(EnumType.STRING)
+    private Status status;
+
+    public enum Status {
+        OPEN, CLOSED
+    }
+
+
+    public void receivedBy(Long receiverId) {
+        this.receiverId = receiverId;
+        this.status = Status.CLOSED;
+    }
 
     @Version
     private Long version;

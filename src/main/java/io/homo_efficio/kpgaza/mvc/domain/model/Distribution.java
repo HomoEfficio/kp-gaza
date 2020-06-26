@@ -7,8 +7,8 @@ import org.apache.commons.lang3.RandomStringUtils;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * @author homo.efficio@gmail.com
@@ -43,7 +43,7 @@ public class Distribution extends BaseEntity {
     private ChatRoom chatRoom;
 
     @OneToMany(mappedBy = "distribution", cascade = CascadeType.ALL, orphanRemoval = true)
-    private Set<Receipt> receipts = new HashSet<>();
+    private List<Receipt> receipts = new ArrayList<>();
 
 
     public Distribution(Long id, KUser distributor, ChatRoom chatRoom, Integer amount, Integer targets) {
@@ -53,6 +53,14 @@ public class Distribution extends BaseEntity {
         this.chatRoom = chatRoom;
         this.amount = amount;
         this.targets = targets;
+        initReceipts(targets);
+    }
+
+    private void initReceipts(Integer targets) {
+        List<Integer> amountsPerCapita = getAmountsPerCapita();
+        for (int i = 0; i < targets; i++) {
+            receipts.add(new Receipt(null, null, amountsPerCapita.get(i), this, Receipt.Status.OPEN));
+        }
     }
 
     public Distribution(Long id, String token, KUser distributor, ChatRoom chatRoom, Integer amount, Integer targets) {
@@ -70,5 +78,23 @@ public class Distribution extends BaseEntity {
 
     private String generateToken() {
         return RandomStringUtils.random(3, true, true);
+    }
+
+    private List<Integer> getAmountsPerCapita() {
+        List<Integer> result = new ArrayList<>(targets);
+        int residue = amount % targets;
+        if (residue == 0) {
+            for (int i = 0; i < targets; i++) {
+                result.add(amount / targets);
+            }
+            return result;
+        } else {
+            int perCapita = amount / targets;
+            result.add(perCapita + residue);
+            for (int i = 1; i < targets; i++) {
+                result.add(perCapita);
+            }
+            return result;
+        }
     }
 }
