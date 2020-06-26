@@ -1,12 +1,13 @@
 package io.homo_efficio.kpgaza.mvc.domain.model;
 
-import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.UUID;
 
 /**
@@ -16,7 +17,6 @@ import java.util.UUID;
 @Entity
 @Getter
 @NoArgsConstructor
-@AllArgsConstructor
 @EqualsAndHashCode(of = "id", callSuper = false)
 public class ChatRoom extends BaseEntity {
 
@@ -31,4 +31,14 @@ public class ChatRoom extends BaseEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "owner_id")
     private KUser owner;
+
+    @OneToMany(mappedBy = "chatRoom", cascade = CascadeType.ALL, orphanRemoval = true)
+    private Set<ChatUser> chatUsers = new HashSet<>();
+
+
+    public ChatRoom(UUID id, String name, KUser owner) {
+        this.id = id;
+        this.name = name;
+        this.owner = owner;
+    }
 }
