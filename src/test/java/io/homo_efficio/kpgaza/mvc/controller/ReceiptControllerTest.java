@@ -157,4 +157,16 @@ public class ReceiptControllerTest {
                 .header("X-ROOM-ID", "4cf55070-10ae-4097-afcf-d61a25cfd233")
                 .content(receiptInJackson.write(new ReceiptIn("a11")).getJson())));
     }
+
+    @DisplayName("뿌려진 지 10분 경과된 수령 시도는 실패한다.")
+    @Test
+    @Sql(scripts = "classpath:init-distributions-timeout.sql")
+    void distributionTimeout10Mins() {
+        assertThrows(NestedServletException.class, () -> mvc.perform(post("/receipts")
+                .contentType(MediaType.APPLICATION_JSON)
+                .accept(MediaType.APPLICATION_JSON)
+                .header("X-USER-ID", 3)
+                .header("X-ROOM-ID", "4cf55070-10ae-4097-afcf-d61a25cfd233")
+                .content(receiptInJackson.write(new ReceiptIn("a11")).getJson())));
+    }
 }
