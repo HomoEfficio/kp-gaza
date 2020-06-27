@@ -1,9 +1,7 @@
 package io.homo_efficio.kpgaza.mvc.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import io.homo_efficio.kpgaza.mvc.domain.model.Receipt;
 import io.homo_efficio.kpgaza.mvc.dto.DistributionIn;
-import io.homo_efficio.kpgaza.mvc.dto.ReceiptOut;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -22,8 +20,6 @@ import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.filter.CharacterEncodingFilter;
 import org.springframework.web.util.NestedServletException;
 
-import java.util.Collections;
-import java.util.List;
 import java.util.UUID;
 import java.util.stream.Stream;
 
@@ -167,5 +163,17 @@ class DistributionControllerTest {
                 Arguments.of("a21", 3L),
                 Arguments.of("c41", 9L)
         );
+    }
+
+    @DisplayName("7일 지난 뿌리기 정보 조회는 실패한다.")
+    @Test
+    @Sql(scripts = "classpath:init-distributions-expired.sql")
+    void findDistributionAfter7DaysFails() {
+        assertThrows(NestedServletException.class, () ->
+                mvc.perform(get("/distributions?token=" + "a11")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .accept(MediaType.APPLICATION_JSON)
+                        .header("X-USER-ID", 1L))
+                        .andExpect(status().isOk()));
     }
 }

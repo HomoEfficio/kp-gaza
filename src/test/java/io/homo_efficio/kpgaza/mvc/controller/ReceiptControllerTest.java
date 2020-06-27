@@ -160,7 +160,7 @@ public class ReceiptControllerTest {
 
     @DisplayName("뿌려진 지 10분 경과된 수령 시도는 실패한다.")
     @Test
-    @Sql(scripts = "classpath:init-distributions-timeout.sql")
+    @Sql(scripts = "classpath:init-receipts-expired.sql")
     void distributionTimeout10Mins() {
         assertThrows(NestedServletException.class, () -> mvc.perform(post("/receipts")
                 .contentType(MediaType.APPLICATION_JSON)
