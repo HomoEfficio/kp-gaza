@@ -10,3 +10,17 @@ spring:
   cloud:
     consul:
       enabled: false
+
+---
+spring.profiles: docker
+
+spring:
+  datasource:
+    url: jdbc:postgresql://postgresql:5432/kp-gaza
+    username: user
+    password: pwd
+  jpa:
+    show-sql: true
+    open-in-view: false
+    hibernate.ddl-auto: create
+

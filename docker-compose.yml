@@ -17,13 +17,21 @@ services:
       interval: 20s
       timeout: 5s
       retries: 10
-  kp-gaza:
-    build: ./
+  money-distribution:
+    build: money-distribution/
     mem_limit: 300m
     networks:
       - my-network
     depends_on:
       - postgresql
+  edge-server:
+    build: edge-server/
+    mem_limit: 200m
+    networks:
+      - my-network
+    ports:
+      - "9000:9000"
+
 
 networks:
   my-network:
