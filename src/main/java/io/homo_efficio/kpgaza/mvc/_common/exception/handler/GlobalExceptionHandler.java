@@ -1,6 +1,8 @@
 package io.homo_efficio.kpgaza.mvc._common.exception.handler;
 
 import io.homo_efficio.kpgaza.mvc._common.exception.EntityNotFoundException;
+import io.homo_efficio.kpgaza.mvc._common.exception.InvalidDistributionException;
+import io.homo_efficio.kpgaza.mvc._common.exception.InvalidReceiptException;
 import io.homo_efficio.kpgaza.mvc._config.MessageConfig;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -38,5 +40,27 @@ public class GlobalExceptionHandler {
                     ServletUriComponentsBuilder.fromCurrentRequestUri().toUriString());
         }
         return new ResponseEntity<>(errorResponse, HttpStatus.NOT_FOUND);
+    }
+
+    @ExceptionHandler(InvalidDistributionException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ResponseEntity<ErrorResponse> handleInvalidDistributionException(InvalidDistributionException e) {
+        log.error("handleInvalidDistributionException: {}", e.getMessage());
+        ErrorResponse errorResponse;
+        errorResponse = ErrorResponse.of(ErrorCode.INVALID_DISTRIBUTION,
+                messageResolver.getMessage(ErrorCode.INVALID_DISTRIBUTION.getErrorCode(), e.getMessage()),
+                ServletUriComponentsBuilder.fromCurrentRequestUri().toUriString());
+        return new ResponseEntity<>(errorResponse, HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(InvalidReceiptException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ResponseEntity<ErrorResponse> handleInvalidReceiptException(InvalidReceiptException e) {
+        log.error("handleInvalidReceiptException: {}", e.getMessage());
+        ErrorResponse errorResponse;
+        errorResponse = ErrorResponse.of(ErrorCode.INVALID_RECEIPT,
+                messageResolver.getMessage(ErrorCode.INVALID_RECEIPT.getErrorCode(), e.getMessage()),
+                ServletUriComponentsBuilder.fromCurrentRequestUri().toUriString());
+        return new ResponseEntity<>(errorResponse, HttpStatus.BAD_REQUEST);
     }
 }
