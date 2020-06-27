@@ -55,28 +55,20 @@ insert into chat_user (chat_room_id, chatter_id) values
 ('c2cef0fb71084f5e92e39b3011f77fbf', 9)
 ;
 
--- For H2
--- insert into distribution (token, amount, targets, distributor_id, chat_room_id, created_at) values
--- ('a11', 100, 2, 1, '4cf5507010ae4097afcfd61a25cfd233', timestampadd(day, -7, now())),
--- ('a21', 400, 4, 2, '4cf5507010ae4097afcfd61a25cfd233', now()),
--- ('c41', 300, 1, 4, 'b7dd1bf7bf2048f898ff558f04faa35f', now())
--- ;
-
--- For Postgres
 insert into distribution (token, amount, targets, distributor_id, chat_room_id, created_at) values
-('a11', 100, 2, 1, '4cf5507010ae4097afcfd61a25cfd233', current_timestamp - (7 || ' days')::interval),
+('a11', 100, 2, 1, '4cf5507010ae4097afcfd61a25cfd233', now()),
 ('a21', 400, 4, 2, '4cf5507010ae4097afcfd61a25cfd233', now()),
 ('c41', 300, 1, 4, 'b7dd1bf7bf2048f898ff558f04faa35f', now())
 ;
 
-insert into receipt (id, receiver_id, amount, distribution_id, status) values
-(1, null, 50, 1, 'OPEN'),
-(2, null, 50, 1, 'OPEN'),
-(3, null, 100, 2, 'OPEN'),
-(4, null, 100, 2, 'OPEN'),
-(5, null, 100, 2, 'OPEN'),
-(6, null, 100, 2, 'OPEN'),
-(7, null, 300, 3, 'OPEN')
+insert into receipt (id, receiver_id, amount, distribution_id, status, version) values
+(1, null, 50, 1, 'OPEN', 1),
+(2, null, 50, 1, 'OPEN', 1),
+(3, null, 100, 2, 'OPEN', 1),
+(4, null, 100, 2, 'OPEN', 1),
+(5, null, 100, 2, 'OPEN', 1),
+(6, null, 100, 2, 'OPEN', 1),
+(7, null, 300, 3, 'OPEN', 1)
 ;
 
 update receipt

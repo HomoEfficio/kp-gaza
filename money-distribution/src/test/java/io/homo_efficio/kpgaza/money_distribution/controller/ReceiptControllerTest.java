@@ -53,7 +53,7 @@ public class ReceiptControllerTest {
 
     @ParameterizedTest(name = "대화방 멤버 [{0}]가 대화방 [{1}]에서 토큰 [{2}]을 사용해서 뿌려진 머니를 수령하면, 수령 금액 [{3}]을 반환한다.")
     @MethodSource("receipts")
-    @Sql(scripts = "classpath:init-distributions.sql")
+    @Sql(scripts = "classpath:sql/h2/init-distributions.sql")
     void createReceipt(Long chatterId, UUID chatRoomId, String token, Integer amount) throws Exception {
         mvc.perform(post("/receipts")
                 .contentType(MediaType.APPLICATION_JSON)
@@ -80,7 +80,7 @@ public class ReceiptControllerTest {
     }
 
     @DisplayName("1/N 이 딱 떨어지지 않을 때는 첫번쨰 수령자가 나머지를 포함한 금액을 수령한다.")
-    @Sql(scripts = "classpath:init-distributions-inequal-amounts.sql")
+    @Sql(scripts = "classpath:sql/h2/init-distributions-inequal-amounts.sql")
     @Test
     void createReceiptWithInEqualAmounts() throws Exception {
         mvc.perform(post("/receipts")
@@ -113,7 +113,7 @@ public class ReceiptControllerTest {
 
     @DisplayName("동일한 뿌리기에서 한 사용자가 중복 수령 시도하면 예외가 발생한다.")
     @Test
-    @Sql(scripts = "classpath:init-distributions.sql")
+    @Sql(scripts = "classpath:sql/h2/init-distributions.sql")
     void receiveMultipleTimesInSameDistributionProhibited() throws Exception {
         mvc.perform(post("/receipts")
                 .contentType(MediaType.APPLICATION_JSON)
@@ -137,7 +137,7 @@ public class ReceiptControllerTest {
 
     @DisplayName("자기가 뿌린 뿌리기에서 수령 시도하면 예외가 발생한다.")
     @Test
-    @Sql(scripts = "classpath:init-distributions.sql")
+    @Sql(scripts = "classpath:sql/h2/init-distributions.sql")
     void selfReceiptProhibited() throws Exception {
         mvc.perform(post("/receipts")
                 .contentType(MediaType.APPLICATION_JSON)
@@ -152,7 +152,7 @@ public class ReceiptControllerTest {
 
     @DisplayName("다른 대화방의 사용자가 다른 방의 뿌리기에서 수령 시도하면 예외가 발생한다.")
     @Test
-    @Sql(scripts = "classpath:init-distributions.sql")
+    @Sql(scripts = "classpath:sql/h2/init-distributions.sql")
     void differentChatRoomReceiptProhibited() throws Exception {
         mvc.perform(post("/receipts")
                 .contentType(MediaType.APPLICATION_JSON)
@@ -166,7 +166,7 @@ public class ReceiptControllerTest {
 
     @DisplayName("뿌려진 지 10분 경과된 수령 시도는 실패한다.")
     @Test
-    @Sql(scripts = "classpath:init-receipts-expired.sql")
+    @Sql(scripts = "classpath:sql/h2/init-receipts-expired.sql")
     void distributionTimeout10Mins() throws Exception {
         mvc.perform(post("/receipts")
                 .contentType(MediaType.APPLICATION_JSON)

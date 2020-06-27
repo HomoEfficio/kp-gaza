@@ -1,17 +1,12 @@
 -- For H2
--- set referential_integrity false;
--- truncate table receipt restart identity;
--- truncate table distribution restart identity;
--- truncate table chat_user restart identity;
--- truncate table chat_room restart identity;
--- truncate table k_user restart identity;
--- set referential_integrity true;
+set referential_integrity false;
+truncate table receipt restart identity;
+truncate table distribution restart identity;
+truncate table chat_user restart identity;
+truncate table chat_room restart identity;
+truncate table k_user restart identity;
+set referential_integrity true;
 
-truncate table receipt restart identity cascade;
-truncate table distribution restart identity cascade;
-truncate table chat_user restart identity cascade;
-truncate table chat_room restart identity cascade;
-truncate table k_user restart identity cascade;
 
 insert into k_user (id, name) values
 (1, 'ㅋㅋㅇ'),
@@ -61,12 +56,12 @@ insert into distribution (token, amount, targets, distributor_id, chat_room_id, 
 ('c41', 300, 1, 4, 'b7dd1bf7bf2048f898ff558f04faa35f', now())
 ;
 
-insert into receipt (receiver_id, amount, distribution_id, status) values
-(null, 50, 1, 'OPEN'),
-(null, 50, 1, 'OPEN'),
-(null, 100, 2, 'OPEN'),
-(null, 100, 2, 'OPEN'),
-(null, 100, 2, 'OPEN'),
-(null, 100, 2, 'OPEN'),
-(null, 300, 3, 'OPEN')
+insert into receipt (receiver_id, amount, distribution_id, status, version) values
+(null, 50, 1, 'OPEN', 1),
+(null, 50, 1, 'OPEN', 1),
+(null, 100, 2, 'OPEN', 1),
+(null, 100, 2, 'OPEN', 1),
+(null, 100, 2, 'OPEN', 1),
+(null, 100, 2, 'OPEN', 1),
+(null, 300, 3, 'OPEN', 1)
 ;

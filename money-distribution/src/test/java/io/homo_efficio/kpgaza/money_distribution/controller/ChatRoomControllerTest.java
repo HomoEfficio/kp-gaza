@@ -9,6 +9,8 @@ import org.junit.jupiter.params.provider.MethodSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.json.JacksonTester;
+import org.springframework.boot.test.util.ApplicationContextTestUtils;
+import org.springframework.context.ApplicationContext;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.web.servlet.MockMvc;
@@ -47,7 +49,7 @@ class ChatRoomControllerTest {
 
     @ParameterizedTest(name = "방이름: {0}, 방장id: {1}인 대화방을 생성한다.")
     @MethodSource("chatRooms")
-    @Sql(scripts = "classpath:init-kusers.sql")
+    @Sql(scripts = "classpath:sql/h2/init-kusers.sql")
     void create(String name, Long ownerId) throws Exception {
         mvc.perform(post("/chat-rooms")
                 .contentType(MediaType.APPLICATION_JSON)
@@ -69,7 +71,7 @@ class ChatRoomControllerTest {
 
     @ParameterizedTest(name = "방id: [{0}]에 사용자id: [{1}]이 입장한다.")
     @MethodSource("chatUsers")
-    @Sql(scripts = "classpath:init-chatrooms.sql")
+    @Sql(scripts = "classpath:sql/h2/init-chatrooms.sql")
     void createChatUser(UUID chatRoomId, Long chatterId) throws Exception {
         mvc.perform(post("/chat-rooms/" + chatRoomId + "/chatters/" + chatterId)
                 .contentType(MediaType.APPLICATION_JSON)

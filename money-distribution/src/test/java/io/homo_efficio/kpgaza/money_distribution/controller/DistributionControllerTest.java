@@ -56,7 +56,7 @@ class DistributionControllerTest {
 
     @ParameterizedTest(name = "대화방 멤버 [{0}]가 대화방 [{1}]에서 머니 [{2}]를 [{3}]명에게 뿌리면, 뿌리기 요청건에 대한 토큰을 반환한다.")
     @MethodSource("distributions")
-    @Sql(scripts = "classpath:init-chatusers.sql")
+    @Sql(scripts = "classpath:sql/h2/init-chatusers.sql")
     void createDistribution(Long chatterId, UUID chatRoomId, int money, int targets) throws Exception {
         mvc.perform(post("/distributions")
                 .contentType(MediaType.APPLICATION_JSON)
@@ -82,7 +82,7 @@ class DistributionControllerTest {
     @DisplayName("뿌린 사용자 가 토큰 으로 뿌리기 를 조회하면, " +
             "뿌린 시각, 뿌린 금액, 받기 완료 총금액, 받기 완료 목록 을 반환한다 - 전액 다 수령된 케이스")
     @Test
-    @Sql(scripts = "classpath:init-receipts.sql")
+    @Sql(scripts = "classpath:sql/h2/init-receipts.sql")
     void findDistributionFullyReceived() throws Exception {
         mvc.perform(get("/distributions?token=" + "a11")
                 .contentType(MediaType.APPLICATION_JSON)
@@ -105,7 +105,7 @@ class DistributionControllerTest {
     @DisplayName("뿌린 사용자 가 토큰 으로 뿌리기 를 조회하면, " +
             "뿌린 시각, 뿌린 금액, 받기 완료 총금액, 받기 완료 목록 을 반환한다 - 일부 수령된 케이스")
     @Test
-    @Sql(scripts = "classpath:init-receipts.sql")
+    @Sql(scripts = "classpath:sql/h2/init-receipts.sql")
     void findDistributionPartiallyReceived() throws Exception {
         mvc.perform(get("/distributions?token=" + "a21")
                 .contentType(MediaType.APPLICATION_JSON)
@@ -128,7 +128,7 @@ class DistributionControllerTest {
     @DisplayName("뿌린 사용자 가 토큰 으로 뿌리기 를 조회하면, " +
             "뿌린 시각, 뿌린 금액, 받기 완료 총금액, 받기 완료 목록 을 반환한다 - 수령 안 된 케이스")
     @Test
-    @Sql(scripts = "classpath:init-receipts.sql")
+    @Sql(scripts = "classpath:sql/h2/init-receipts.sql")
     void findDistributionNotReceived() throws Exception {
         mvc.perform(get("/distributions?token=" + "c41")
                 .contentType(MediaType.APPLICATION_JSON)
@@ -146,7 +146,7 @@ class DistributionControllerTest {
 
     @ParameterizedTest(name = "본인이 아니면 뿌리기 정보 조회는 실패한다.")
     @MethodSource("unauthorizedRequesters")
-    @Sql(scripts = "classpath:init-receipts.sql")
+    @Sql(scripts = "classpath:sql/h2/init-receipts.sql")
     void onlyDistributorCanSeeHisDistribution(String token, Long requesterId) throws Exception {
         mvc.perform(get("/distributions?token=" + token)
                 .contentType(MediaType.APPLICATION_JSON)
@@ -167,7 +167,7 @@ class DistributionControllerTest {
 
     @DisplayName("7일 지난 뿌리기 정보 조회는 실패한다.")
     @Test
-    @Sql(scripts = "classpath:init-distributions-expired.sql")
+    @Sql(scripts = "classpath:sql/h2/init-distributions-expired.sql")
     void findDistributionAfter7DaysFails() throws Exception {
         mvc.perform(get("/distributions?token=" + "a11")
                 .contentType(MediaType.APPLICATION_JSON)
