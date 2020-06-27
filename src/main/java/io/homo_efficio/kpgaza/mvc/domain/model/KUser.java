@@ -84,4 +84,11 @@ public class KUser extends BaseEntity {
         receipt.receivedBy(this.id);
         return receipt;
     }
+
+    public Distribution showDistribution(Distribution distribution) {
+        if (!distribution.getDistributor().equals(this)) {
+            throw new RuntimeException("자기가 뿌린 뿌리기 정보만 조회할 수 있습니다.");
+        }
+        return distribution;
+    }
 }

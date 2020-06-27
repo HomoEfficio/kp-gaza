@@ -10,5 +10,5 @@ import io.homo_efficio.kpgaza.mvc.dto.DistributionOut;
 public interface DistributionService {
 
     DistributionOut createDistribution(DistributionIn distributionIn);
-    DistributionOut findByToken(String token);
+    DistributionOut findByToken(String token, Long requesterId);
 }

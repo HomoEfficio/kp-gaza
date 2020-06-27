@@ -31,7 +31,8 @@ public class DistributionController {
     }
 
     @GetMapping
-    public ResponseEntity<DistributionOut> findByToken(@RequestParam String token) {
-        return ResponseEntity.ok(distributionService.findByToken(token));
+    public ResponseEntity<DistributionOut> findByToken(@RequestHeader("X-USER-ID") Long requesterId,
+                                                       @RequestParam String token) {
+        return ResponseEntity.ok(distributionService.findByToken(token, requesterId));
     }
 }
