@@ -148,13 +148,14 @@ class DistributionControllerTest {
     @ParameterizedTest(name = "본인이 아니면 뿌리기 정보 조회는 실패한다.")
     @MethodSource("unauthorizedRequesters")
     @Sql(scripts = "classpath:init-receipts.sql")
-    void onlyDistributorCanSeeHisDistribution(String token, Long requesterId) {
-        assertThrows(NestedServletException.class, () ->
-                mvc.perform(get("/distributions?token=" + token)
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .accept(MediaType.APPLICATION_JSON)
-                        .header("X-USER-ID", requesterId))
-                        .andExpect(status().isOk()));
+    void onlyDistributorCanSeeHisDistribution(String token, Long requesterId) throws Exception {
+        mvc.perform(get("/distributions?token=" + token)
+                .contentType(MediaType.APPLICATION_JSON)
+                .accept(MediaType.APPLICATION_JSON)
+                .header("X-USER-ID", requesterId))
+                .andExpect(status().is4xxClientError())
+                .andExpect(jsonPath("message").value("자기가 뿌린 뿌리기 정보만 조회할 수 있습니다."))
+        ;
     }
 
     private static Stream<Arguments> unauthorizedRequesters() {
@@ -168,12 +169,13 @@ class DistributionControllerTest {
     @DisplayName("7일 지난 뿌리기 정보 조회는 실패한다.")
     @Test
     @Sql(scripts = "classpath:init-distributions-expired.sql")
-    void findDistributionAfter7DaysFails() {
-        assertThrows(NestedServletException.class, () ->
-                mvc.perform(get("/distributions?token=" + "a11")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .accept(MediaType.APPLICATION_JSON)
-                        .header("X-USER-ID", 1L))
-                        .andExpect(status().isOk()));
+    void findDistributionAfter7DaysFails() throws Exception {
+        mvc.perform(get("/distributions?token=" + "a11")
+                .contentType(MediaType.APPLICATION_JSON)
+                .accept(MediaType.APPLICATION_JSON)
+                .header("X-USER-ID", 1L))
+                .andExpect(status().is4xxClientError())
+                .andExpect(jsonPath("message").value("뿌린 지 7일 이내 뿌리기 정보만 조회할 수 있습니다."))
+        ;
     }
 }
