@@ -21,7 +21,7 @@ import java.util.UUID;
 public class ChatRoom extends BaseEntity {
 
     @Id
-    @Column(columnDefinition = "BINARY(16)")
+//    @Column(columnDefinition = "BINARY(16)")  // for H2
     private UUID id;
 
     @NotNull

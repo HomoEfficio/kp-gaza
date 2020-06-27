@@ -1,6 +1,9 @@
-set referential_integrity false;
-truncate table k_user restart identity;
-set referential_integrity true;
+-- For H2
+-- set referential_integrity false;
+-- truncate table k_user restart identity;
+-- set referential_integrity true;
+
+truncate table k_user restart identity cascade;
 
 insert into k_user (id, name) values
 (1, 'ㅋㅋㅇ'),

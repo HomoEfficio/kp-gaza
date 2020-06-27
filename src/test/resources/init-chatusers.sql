@@ -1,8 +1,13 @@
-set referential_integrity false;
-truncate table chat_user restart identity;
-truncate table chat_room restart identity;
-truncate table k_user restart identity;
-set referential_integrity true;
+-- For H2
+-- set referential_integrity false;
+-- truncate table chat_user restart identity;
+-- truncate table chat_room restart identity;
+-- truncate table k_user restart identity;
+-- set referential_integrity true;
+
+truncate table chat_user restart identity cascade;
+truncate table chat_room restart identity cascade;
+truncate table k_user restart identity cascade;
 
 insert into k_user (id, name) values
 (1, 'ㅋㅋㅇ'),

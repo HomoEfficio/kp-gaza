@@ -1,10 +1,17 @@
-set referential_integrity false;
-truncate table receipt restart identity;
-truncate table distribution restart identity;
-truncate table chat_user restart identity;
-truncate table chat_room restart identity;
-truncate table k_user restart identity;
-set referential_integrity true;
+-- For H2
+-- set referential_integrity false;
+-- truncate table receipt restart identity;
+-- truncate table distribution restart identity;
+-- truncate table chat_user restart identity;
+-- truncate table chat_room restart identity;
+-- truncate table k_user restart identity;
+-- set referential_integrity true;
+
+truncate table receipt restart identity cascade;
+truncate table distribution restart identity cascade;
+truncate table chat_user restart identity cascade;
+truncate table chat_room restart identity cascade;
+truncate table k_user restart identity cascade;
 
 insert into k_user (id, name) values
 (1, 'ㅋㅋㅇ'),
@@ -48,8 +55,16 @@ insert into chat_user (chat_room_id, chatter_id) values
 ('c2cef0fb71084f5e92e39b3011f77fbf', 9)
 ;
 
+-- For H2
+-- insert into distribution (token, amount, targets, distributor_id, chat_room_id, created_at) values
+-- ('a11', 100, 2, 1, '4cf5507010ae4097afcfd61a25cfd233', timestampadd(day, -7, now())),
+-- ('a21', 400, 4, 2, '4cf5507010ae4097afcfd61a25cfd233', now()),
+-- ('c41', 300, 1, 4, 'b7dd1bf7bf2048f898ff558f04faa35f', now())
+-- ;
+
+-- For Postgres
 insert into distribution (token, amount, targets, distributor_id, chat_room_id, created_at) values
-('a11', 100, 2, 1, '4cf5507010ae4097afcfd61a25cfd233', timestampadd(day, -7, now())),
+('a11', 100, 2, 1, '4cf5507010ae4097afcfd61a25cfd233', current_timestamp - (7 || ' days')::interval),
 ('a21', 400, 4, 2, '4cf5507010ae4097afcfd61a25cfd233', now()),
 ('c41', 300, 1, 4, 'b7dd1bf7bf2048f898ff558f04faa35f', now())
 ;
