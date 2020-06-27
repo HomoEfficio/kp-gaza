@@ -12,6 +12,10 @@ spring:
     consul:
       enabled: false
 
+springdoc:
+  swagger-ui:
+    url: https://raw.githubusercontent.com/HomoEfficio/kp-gaza/master/api-docs.yml
+
 ---
 spring.profiles: docker
 

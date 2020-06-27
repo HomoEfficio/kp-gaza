@@ -1,0 +1,402 @@
+openapi: 3.0.1
+info:
+  title: OpenAPI definition
+  version: v0
+servers:
+- url: "http://localhost:8080"
+  description: Generated server url
+paths:
+  /chat-rooms:
+    post:
+      description: 대화방 생성
+      tags:
+      - 대화방
+      operationId: create
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ChatRoomIn"
+        required: true
+      responses:
+        "404":
+          description: Not Found
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "400":
+          description: Bad Request
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/ChatRoomOut"
+  /chat-rooms/{chatRoomId}/chatters/{chatterId}:
+    post:
+      description: 대화방 입장
+      tags:
+      - 대화방
+      operationId: createChatUser
+      parameters:
+      - name: chatRoomId
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - name: chatterId
+        in: path
+        required: true
+        schema:
+          type: integer
+          format: int64
+      responses:
+        "404":
+          description: Not Found
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "400":
+          description: Bad Request
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/ChatUserOut"
+  /distributions:
+    get:
+      description: 머니 뿌리기 상태 조회
+      tags:
+      - 머니 뿌리기
+      operationId: findByToken
+      parameters:
+      - name: X-USER-ID
+        in: header
+        required: true
+        schema:
+          type: integer
+          format: int64
+      - name: token
+        in: query
+        required: true
+        schema:
+          type: string
+      responses:
+        "404":
+          description: Not Found
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "400":
+          description: Bad Request
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/DistributionOut"
+    post:
+      description: 머니 뿌리기 생성
+      tags:
+      - 머니 뿌리기
+      operationId: createDistribution
+      parameters:
+      - name: X-USER-ID
+        in: header
+        required: true
+        schema:
+          type: integer
+          format: int64
+      - name: X-ROOM-ID
+        in: header
+        required: true
+        schema:
+          type: string
+          format: uuid
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/DistributionIn"
+        required: true
+      responses:
+        "404":
+          description: Not Found
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "400":
+          description: Bad Request
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/DistributionToken"
+  /kusers:
+    post:
+      description: 사용자 생성
+      tags:
+      - 사용자
+      operationId: create_1
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/KUserIn"
+        required: true
+      responses:
+        "404":
+          description: Not Found
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "400":
+          description: Bad Request
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/KUserOut"
+  /receipts:
+    post:
+      description: 뿌려진 머니 수령
+      tags:
+      - 머니 받기
+      operationId: create_2
+      parameters:
+      - name: X-USER-ID
+        in: header
+        required: true
+        schema:
+          type: integer
+          format: int64
+      - name: X-ROOM-ID
+        in: header
+        required: true
+        schema:
+          type: string
+          format: uuid
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ReceiptIn"
+        required: true
+      responses:
+        "404":
+          description: Not Found
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "400":
+          description: Bad Request
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/ReceiptAmount"
+components:
+  schemas:
+    ErrorResponse:
+      type: object
+      properties:
+        statusCode:
+          type: integer
+          format: int32
+        errorCode:
+          type: string
+        message:
+          type: string
+        errors:
+          type: array
+          items:
+            $ref: "#/components/schemas/FieldErr"
+        timestamp:
+          type: string
+          format: date-time
+        requestUrl:
+          type: string
+    FieldErr:
+      type: object
+      properties:
+        field:
+          type: string
+        value:
+          type: string
+        reason:
+          type: string
+    ChatRoomIn:
+      required:
+      - name
+      - ownerId
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        name:
+          type: string
+        ownerId:
+          type: integer
+          format: int64
+    ChatRoomOut:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        ownerId:
+          type: integer
+          format: int64
+        ownerName:
+          type: string
+    ChatUserOut:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        chatRoomId:
+          type: string
+          format: uuid
+        chatterId:
+          type: integer
+          format: int64
+    DistributionOut:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        token:
+          type: string
+        distributorId:
+          type: integer
+          format: int64
+        chatRoomId:
+          type: string
+          format: uuid
+        distributedAt:
+          type: string
+          format: date-time
+        amount:
+          type: integer
+          format: int32
+        targets:
+          type: integer
+          format: int32
+        receivedAmount:
+          type: integer
+          format: int32
+        receipts:
+          type: array
+          items:
+            $ref: "#/components/schemas/ReceiptOut"
+    ReceiptOut:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        receiverId:
+          type: integer
+          format: int64
+        amount:
+          type: integer
+          format: int32
+    DistributionIn:
+      required:
+      - amount
+      - chatRoomId
+      - distributorId
+      - targets
+      type: object
+      properties:
+        distributorId:
+          type: integer
+          format: int64
+        chatRoomId:
+          type: string
+          format: uuid
+        amount:
+          type: integer
+          format: int32
+        targets:
+          type: integer
+          format: int32
+    DistributionToken:
+      type: object
+      properties:
+        token:
+          type: string
+    KUserIn:
+      required:
+      - name
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        name:
+          type: string
+    KUserOut:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        name:
+          type: string
+    ReceiptIn:
+      type: object
+      properties:
+        token:
+          type: string
+        receiverId:
+          type: integer
+          format: int64
+        chatRoomId:
+          type: string
+          format: uuid
+    ReceiptAmount:
+      type: object
+      properties:
+        amount:
+          type: integer
+          format: int32
