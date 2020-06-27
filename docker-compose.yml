@@ -17,6 +17,13 @@ services:
       interval: 20s
       timeout: 5s
       retries: 10
+  kp-gaza:
+    build: ./
+    mem_limit: 300m
+    networks:
+      - my-network
+    depends_on:
+      - postgresql
 
 networks:
   my-network:
