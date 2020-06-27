@@ -71,6 +71,10 @@ public class KUser extends BaseEntity {
         if (distribution.getDistributor().equals(this))
             throw new RuntimeException("자기가 뿌린 머니는 수령할 수 없습니다.");
 
+        if (!distribution.getChatRoom().containsUser(this)) {
+            throw new RuntimeException("참여하지 않은 대화방에 있는 뿌리기는 수령할 수 없습니다.");
+        }
+
         receipt.receivedBy(this.id);
         return receipt;
     }
