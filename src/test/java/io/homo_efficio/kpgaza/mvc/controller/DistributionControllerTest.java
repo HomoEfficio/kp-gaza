@@ -1,8 +1,12 @@
 package io.homo_efficio.kpgaza.mvc.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import io.homo_efficio.kpgaza.mvc.domain.model.Receipt;
 import io.homo_efficio.kpgaza.mvc.dto.DistributionIn;
+import io.homo_efficio.kpgaza.mvc.dto.ReceiptOut;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
@@ -17,11 +21,14 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.filter.CharacterEncodingFilter;
 
+import java.util.Collections;
+import java.util.List;
 import java.util.UUID;
 import java.util.stream.Stream;
 
-import static org.hamcrest.Matchers.hasLength;
+import static org.hamcrest.Matchers.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -73,5 +80,70 @@ class DistributionControllerTest {
                 Arguments.of(2L, "4cf55070-10ae-4097-afcf-d61a25cfd233", 100, 4),
                 Arguments.of(4L, "b7dd1bf7-bf20-48f8-98ff-558f04faa35f", 200, 1)
         );
+    }
+
+    @DisplayName("뿌린 사용자 가 토큰 으로 뿌리기 를 조회하면, " +
+            "뿌린 시각, 뿌린 금액, 받기 완료 총금액, 받기 완료 목록 을 반환한다 - 전액 다 수령된 케이스")
+    @Test
+    @Sql(scripts = "classpath:init-receipts.sql")
+    void findDistributionFullyReceived() throws Exception {
+        mvc.perform(get("/distributions?token=" + "a11")
+                .contentType(MediaType.APPLICATION_JSON)
+                .accept(MediaType.APPLICATION_JSON)
+                .header("X-USER-ID", 1L))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("distributedAt").exists())
+                .andExpect(jsonPath("distributedAt").isNotEmpty())
+                .andExpect(jsonPath("amount").value(100))
+                .andExpect(jsonPath("receivedAmount").value(100))
+                .andExpect(jsonPath("receipts").isArray())
+                .andExpect(jsonPath("receipts", hasSize(2)))
+                .andExpect(jsonPath("receipts[0].amount").value(50))
+                .andExpect(jsonPath("receipts[0].receiverId").value(2L))
+                .andExpect(jsonPath("receipts[1].amount").value(50))
+                .andExpect(jsonPath("receipts[1].receiverId").value(3L))
+        ;
+    }
+
+    @DisplayName("뿌린 사용자 가 토큰 으로 뿌리기 를 조회하면, " +
+            "뿌린 시각, 뿌린 금액, 받기 완료 총금액, 받기 완료 목록 을 반환한다 - 일부 수령된 케이스")
+    @Test
+    @Sql(scripts = "classpath:init-receipts.sql")
+    void findDistributionPartiallyReceived() throws Exception {
+        mvc.perform(get("/distributions?token=" + "a21")
+                .contentType(MediaType.APPLICATION_JSON)
+                .accept(MediaType.APPLICATION_JSON)
+                .header("X-USER-ID", 2L))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("distributedAt").exists())
+                .andExpect(jsonPath("distributedAt").isNotEmpty())
+                .andExpect(jsonPath("amount").value(400))
+                .andExpect(jsonPath("receivedAmount").value(200))
+                .andExpect(jsonPath("receipts").isArray())
+                .andExpect(jsonPath("receipts", hasSize(2)))
+                .andExpect(jsonPath("receipts[0].amount").value(100))
+                .andExpect(jsonPath("receipts[0].receiverId").value(5L))
+                .andExpect(jsonPath("receipts[1].amount").value(100))
+                .andExpect(jsonPath("receipts[1].receiverId").value(3L))
+        ;
+    }
+
+    @DisplayName("뿌린 사용자 가 토큰 으로 뿌리기 를 조회하면, " +
+            "뿌린 시각, 뿌린 금액, 받기 완료 총금액, 받기 완료 목록 을 반환한다 - 수령 안 된 케이스")
+    @Test
+    @Sql(scripts = "classpath:init-receipts.sql")
+    void findDistributionNotReceived() throws Exception {
+        mvc.perform(get("/distributions?token=" + "c41")
+                .contentType(MediaType.APPLICATION_JSON)
+                .accept(MediaType.APPLICATION_JSON)
+                .header("X-USER-ID", 4L))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("distributedAt").exists())
+                .andExpect(jsonPath("distributedAt").isNotEmpty())
+                .andExpect(jsonPath("amount").value(300))
+                .andExpect(jsonPath("receivedAmount").value(0))
+                .andExpect(jsonPath("receipts").isArray())
+                .andExpect(jsonPath("receipts").isEmpty())
+        ;
     }
 }
