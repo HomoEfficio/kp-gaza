@@ -15,6 +15,7 @@ spring:
     name: money-distribution
   cloud:
     consul:
+      enabled: true
       discovery:
         instance-id: ${spring.application.name}.${random.value}
   datasource:
@@ -25,4 +26,3 @@ spring:
     show-sql: true
     open-in-view: false
     hibernate.ddl-auto: update
-
