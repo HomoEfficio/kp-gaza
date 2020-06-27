@@ -5,6 +5,9 @@ import io.homo_efficio.kpgaza.money_distribution.dto.ChatRoomOut;
 import io.homo_efficio.kpgaza.money_distribution.dto.ChatUserOut;
 import io.homo_efficio.kpgaza.money_distribution.service.ChatRoomService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -29,5 +32,10 @@ public class ChatRoomController {
     @PostMapping("/{chatRoomId}/chatters/{chatterId}")
     public ResponseEntity<ChatUserOut> createChatUser(@PathVariable UUID chatRoomId, @PathVariable Long chatterId) {
         return ResponseEntity.ok(chatRoomService.createChatUser(chatRoomId, chatterId));
+    }
+
+    @GetMapping
+    public ResponseEntity<Page<ChatRoomOut>> list(@PageableDefault(size = 4) Pageable pageable) {
+        return ResponseEntity.ok(chatRoomService.listChatRooms(pageable));
     }
 }

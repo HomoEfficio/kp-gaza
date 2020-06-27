@@ -10,6 +10,8 @@ import io.homo_efficio.kpgaza.money_distribution.dto.ChatRoomIn;
 import io.homo_efficio.kpgaza.money_distribution.dto.ChatRoomOut;
 import io.homo_efficio.kpgaza.money_distribution.dto.ChatUserOut;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -44,5 +46,11 @@ public class ChatRoomServiceImpl implements ChatRoomService {
         KUser chatter = kUserRepository.findById(chatterId)
                 .orElseThrow(() -> new EntityNotFoundException(KUser.class, String.format("사용자 [%s]가 존재하지 않습니다.", chatterId.toString())));
         return ChatUserOut.from(chatUserRepository.save(chatter.enterChatRoom(chatRoom)));
+    }
+
+    @Override
+    public Page<ChatRoomOut> listChatRooms(Pageable pageable) {
+        return chatRoomRepository.findAll(pageable)
+                .map(ChatRoomOut::from);
     }
 }
