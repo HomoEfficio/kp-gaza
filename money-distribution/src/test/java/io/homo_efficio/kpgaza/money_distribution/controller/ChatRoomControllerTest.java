@@ -3,6 +3,8 @@ package io.homo_efficio.kpgaza.money_distribution.controller;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.homo_efficio.kpgaza.money_distribution.dto.ChatRoomIn;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
@@ -22,6 +24,8 @@ import org.springframework.web.filter.CharacterEncodingFilter;
 import java.util.UUID;
 import java.util.stream.Stream;
 
+import static org.hamcrest.Matchers.hasSize;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -108,5 +112,24 @@ class ChatRoomControllerTest {
                 Arguments.of("23662be4-2230-42c9-a93b-a58049fbd414", 3L)
 //                Arguments.of("c2cef0fb-7108-4f5e-92e3-9b3011f77fbf", ), 방장 9L만 있는 방
         );
+    }
+
+    @DisplayName("대화방 목록을 조회한다.")
+    @Test
+    @Sql(scripts = "classpath:sql/h2/init-chatrooms.sql")
+    void listChatRooms() throws Exception {
+        mvc.perform(get("/chat-rooms")
+                .contentType(MediaType.APPLICATION_JSON)
+                .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("content").isArray())
+                .andExpect(jsonPath("content").isNotEmpty())
+                .andExpect(jsonPath("totalElements").value(9))
+                .andExpect(jsonPath("totalPages").value(3))
+                .andExpect(jsonPath("content[0].id").value("4cf55070-10ae-4097-afcf-d61a25cfd233"))
+                .andExpect(jsonPath("content[0].name").value("방1"))
+                .andExpect(jsonPath("content[0].ownerId").value(1L))
+                .andExpect(jsonPath("content[0].ownerName").value("ㅋㅋㅇ"))
+        ;
     }
 }
