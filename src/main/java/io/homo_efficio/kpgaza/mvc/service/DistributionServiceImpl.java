@@ -46,4 +46,12 @@ public class DistributionServiceImpl implements DistributionService {
 
         return DistributionOut.from(distribution);
     }
+
+    @Override
+    public DistributionOut findByToken(String token) {
+        Distribution distribution = distributionRepository.findByToken(token)
+                .orElseThrow(() -> new RuntimeException(
+                        String.format("토큰 [%s]에 해당하는 뿌리기가 존재하지 않습니다.", token)));
+        return DistributionOut.from(distribution);
+    }
 }

@@ -1,6 +1,9 @@
 package io.homo_efficio.kpgaza.mvc.domain.model;
 
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
@@ -36,12 +39,15 @@ public class Receipt extends BaseEntity {
         OPEN, CLOSED
     }
 
+    @Version
+    private Long version;
 
     public void receivedBy(Long receiverId) {
         this.receiverId = receiverId;
         this.status = Status.CLOSED;
     }
 
-    @Version
-    private Long version;
+    public boolean isReceived() {
+        return this.status.equals(Status.CLOSED);
+    }
 }

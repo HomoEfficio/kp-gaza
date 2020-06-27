@@ -9,6 +9,7 @@ import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * @author homo.efficio@gmail.com
@@ -74,7 +75,9 @@ public class Distribution extends BaseEntity {
     public Integer getReceivedAmount() {
         Integer receivedAmount = 0;
         for (Receipt receipt : receipts) {
-            receivedAmount += receipt.getAmount();
+            if (receipt.isReceived()) {
+                receivedAmount += receipt.getAmount();
+            }
         }
         return receivedAmount;
     }
@@ -99,5 +102,9 @@ public class Distribution extends BaseEntity {
             }
             return result;
         }
+    }
+
+    public List<Receipt> getClosedReceipts() {
+        return receipts.stream().filter(Receipt::isReceived).collect(Collectors.toList());
     }
 }

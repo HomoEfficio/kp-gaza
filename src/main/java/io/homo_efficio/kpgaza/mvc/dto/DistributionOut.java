@@ -41,7 +41,7 @@ public class DistributionOut {
                 distribution.getAmount(),
                 distribution.getTargets(),
                 distribution.getReceivedAmount(),
-                distribution.getReceipts().stream()
+                distribution.getClosedReceipts().stream()
                         .map(ReceiptOut::from).collect(Collectors.toList())
         );
     }
