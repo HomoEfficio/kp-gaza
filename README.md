@@ -42,13 +42,14 @@
 
 ## 빌드
 
-- DB 실행
-  - `docker pull postgres:12-alpine`
-  - `docker run -d -p 5432:5432 --name postgres -e POSTGRES_DB=kp-gaza -e POSTGRES_USER=user -e POSTGRES_PASSWORD=pwd postgres:12-alpine`
-- APP 빌드: `./gradlew clean bootJar`
-- Docker 이미지 빌드: `docker-compose build`
+- APP 빌드:
+    - money-distribution 폴더에서 `./gradlew clean bootJar`
+    - edge-server 폴더에서 `./gradlew clean build bootJar`
+        - h2 DB로 테스트
+- Docker 이미지 빌드:
+    - 프로젝트 루트 폴더에서 `docker-compose build`
 
 ## 실행
 
 - App 단일 인스턴스 실행: `docker-compose up -d`
-- App 다중 인스턴스 실행: `docker-compose up -d --scale kp-gaza=3` - 3개 실행
+- App 다중 인스턴스 실행: `docker-compose up -d --scale money-distribution=3` - 3개 실행
