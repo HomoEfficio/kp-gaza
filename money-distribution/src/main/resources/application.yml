@@ -1,0 +1,12 @@
+spring:
+  datasource:
+    url: jdbc:postgresql://localhost:5432/kp-gaza
+    username: user
+    password: pwd
+  jpa:
+    show-sql: true
+    open-in-view: false
+    hibernate.ddl-auto: create
+  cloud:
+    consul:
+      enabled: false
