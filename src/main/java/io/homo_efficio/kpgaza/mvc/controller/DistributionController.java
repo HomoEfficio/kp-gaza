@@ -29,4 +29,9 @@ public class DistributionController {
         DistributionOut distributionOut = distributionService.createDistribution(newDistribution);
         return ResponseEntity.ok(new DistributionToken(distributionOut.getToken()));
     }
+
+    @GetMapping
+    public ResponseEntity<DistributionOut> findByToken(@RequestParam String token) {
+        return ResponseEntity.ok(distributionService.findByToken(token));
+    }
 }
