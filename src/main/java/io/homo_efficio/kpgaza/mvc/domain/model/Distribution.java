@@ -7,6 +7,7 @@ import org.apache.commons.lang3.RandomStringUtils;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -106,5 +107,9 @@ public class Distribution extends BaseEntity {
 
     public List<Receipt> getClosedReceipts() {
         return receipts.stream().filter(Receipt::isReceived).collect(Collectors.toList());
+    }
+
+    public boolean isRetrievalAvailable() {
+        return this.createdDateTime.isAfter(LocalDateTime.now().minusDays(7));
     }
 }
