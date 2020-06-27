@@ -1,0 +1,23 @@
+version: '2.4'
+
+services:
+  postgresql:
+    image: postgres:12-alpine
+    container_name: postgres
+    networks:
+      - my-network
+    ports:
+      - "5432:5432"
+    environment:
+      - POSTGRES_DB=kp-gaza
+      - POSTGRES_USER=user
+      - POSTGRES_PASSWORD=pwd
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U user -d kp-gaza"]
+      interval: 20s
+      timeout: 5s
+      retries: 10
+
+networks:
+  my-network:
+    name: my-network
