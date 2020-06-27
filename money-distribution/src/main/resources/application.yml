@@ -15,6 +15,12 @@ spring:
 spring.profiles: docker
 
 spring:
+  application:
+    name: money-distribution
+  cloud:
+    consul:
+      discovery:
+        instance-id: ${spring.application.name}.${random.value}
   datasource:
     url: jdbc:postgresql://postgresql:5432/kp-gaza
     username: user
