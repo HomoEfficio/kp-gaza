@@ -5,7 +5,8 @@
 - 다중 App 인스턴스를 사용할 수 있도록 마이크로서비스 패턴 중 일부 적용
     - Edge Server: Spring Cloud Gateway
     - Service Discovery: Spring Cloud Consul
-- 1차는 Spring MVC로 구현하고, 자원 사용 효율성을 높이기 위해 2차로 Spring WebFlux + R2DBC로 전환
+- 1차는 Spring MVC로 구현하고, ~~자원 사용 효율성을 높이기 위해 2차로 Spring WebFlux + R2DBC로 전환~~
+    - R2DBC 로 전환은 사실 상 불가로 폐기
 - docker-compose 로 실행 환경 구성
 - 동시 쓰기 발생 가능성이 높은 머니 받기 테이블(receipt)에 Optimistic Lock 적용
 
