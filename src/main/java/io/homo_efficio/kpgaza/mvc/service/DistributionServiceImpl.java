@@ -1,5 +1,6 @@
 package io.homo_efficio.kpgaza.mvc.service;
 
+import io.homo_efficio.kpgaza.mvc._common.exception.InvalidDistributionException;
 import io.homo_efficio.kpgaza.mvc.domain.model.ChatRoom;
 import io.homo_efficio.kpgaza.mvc.domain.model.Distribution;
 import io.homo_efficio.kpgaza.mvc.domain.model.KUser;
@@ -33,12 +34,12 @@ public class DistributionServiceImpl implements DistributionService {
     public DistributionOut createDistribution(DistributionIn distributionIn) {
         Long distributorId = distributionIn.getDistributorId();
         KUser distributor = kUserRepository.findById(distributorId)
-                .orElseThrow(() -> new RuntimeException(
+                .orElseThrow(() -> new InvalidDistributionException(
                         String.format("사용자 [%d]가 존재하지 않아 뿌리기를 할 수 없습니다.", distributorId)));
 
         UUID chatRoomId = distributionIn.getChatRoomId();
         ChatRoom chatRoom = chatRoomRepository.findById(chatRoomId)
-                .orElseThrow(() -> new RuntimeException(
+                .orElseThrow(() -> new InvalidDistributionException(
                         String.format("대화방 [%s]이 존재하지 않아 뿌리기를 할 수 않습니다.", chatRoomId)));
 
         Distribution distribution = distributionRepository.save(
@@ -50,10 +51,10 @@ public class DistributionServiceImpl implements DistributionService {
     @Override
     public DistributionOut findByToken(String token, Long requesterId) {
         Distribution distribution = distributionRepository.findByToken(token)
-                .orElseThrow(() -> new RuntimeException(
+                .orElseThrow(() -> new InvalidDistributionException(
                         String.format("토큰 [%s]에 해당하는 뿌리기가 존재하지 않습니다.", token)));
         KUser requester = kUserRepository.findById(requesterId)
-                .orElseThrow(() -> new RuntimeException(
+                .orElseThrow(() -> new InvalidDistributionException(
                         String.format("사용자 [%d]가 존재하지 않아 뿌리기 정보를 조회할 수 없습니다.", requesterId)));
 
         return DistributionOut.from(requester.showDistribution(distribution));
